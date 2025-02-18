@@ -46,7 +46,15 @@ int main(int argc, char **argv)
     }
 
     DBusMessage msg;
-    uint32_t serial = msg.prepareCall("org.freedesktop.UDisks2", "/org/freedesktop/UDisks2", "org.freedesktop.DBus.ObjectManager", "GetManagedObjects");
+
+    //uint32_t serial = msg.prepareCall("org.freedesktop.UDisks2", "/org/freedesktop/UDisks2", "org.freedesktop.DBus.ObjectManager", "GetManagedObjects");
+
+
+    //uint32_t serial = msg.prepareCall("org.freedesktop.ModemManager1", "/org/freedesktop/ModemManager1", "org.freedesktop.DBus.ObjectManager", "GetManagedObjects");
+
+
+    uint32_t serial = msg.prepareCall("org.freedesktop.NetworkManager", "/org/freedesktop",            "org.freedesktop.DBus.ObjectManager", "GetManagedObjects");
+
 
     err = bus.send(std::move(msg));
     if (err)
@@ -63,6 +71,12 @@ int main(int argc, char **argv)
         {
             err.what();
             return 1;
+        }
+
+        if (answer.isError())
+        {
+            printf("aie: %s\n", answer.errorMessage().c_str());
+            break;
         }
 
         if (answer.isReply())

@@ -48,6 +48,24 @@ namespace dbus
         return extractArgument(dbusType<T>(), &arg);
     }
 
+    template<typename T>
+    DBusError DBusMessage::extractArrayMember(std::vector<DBusVariant>& array)
+    {
+        T data;
+        DBusError err = extractArgument(dbusType<T>(), &data);
+        array.push_back(data);
+        return err;
+    }
+
+    template<typename T>
+    DBusError DBusMessage::extractVariantMember(DBusVariant& variant)
+    {
+        T data;
+        DBusError err = extractArgument(dbusType<T>(), &data);
+        variant = data;
+        return err;
+    }
+
 
     template<typename K, typename V>
     DBusError DBusMessage::extractArgument(Dict<K, V>& arg)
@@ -57,6 +75,12 @@ namespace dbus
         if (err)
         {
             return err;
+        }
+
+        if (array_size == 0)
+        {
+            align(body_pos_, 8); // dict entries are aligned on 8 bytes, even if array is empty
+            return ESUCCESS;
         }
 
         uint32_t const start_pos = body_pos_;

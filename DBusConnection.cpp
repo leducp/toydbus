@@ -2,6 +2,7 @@
 #include <regex>
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 // POSIX
 #include <sys/socket.h>

@@ -52,8 +52,16 @@ namespace dbus
 
         DBusError extractArray(Signature const& s, int32_t index, DBusVariant& array);
 
-        void insertValue(DBUS_TYPE type, void const* data, std::vector<uint8_t>& buffer);
+        // Extract helpers
+        template<typename T>
+        DBusError extractArrayMember(std::vector<DBusVariant>& array);
+
+        template<typename T>
+        DBusError extractVariantMember(DBusVariant& variant);
+
         DBusError extractArgument(DBUS_TYPE type, void* data);
+
+        void insertValue(DBUS_TYPE type, void const* data, std::vector<uint8_t>& buffer);
         DBusError checkSignature(DBUS_TYPE type);
 
         static uint32_t serialCounter_;

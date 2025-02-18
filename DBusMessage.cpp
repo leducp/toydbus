@@ -289,90 +289,18 @@ namespace dbus
                 DBusError err;
                 switch (variant_type)
                 {
-                    case DBUS_TYPE::BYTE:
-                    {
-                        uint8_t val;
-                        err = extractArgument(variant_type, &val);
-                        *arg = val;
-                        break;
-                    }
-                    case DBUS_TYPE::BOOLEAN:
-                    {
-                        bool val;
-                        err = extractArgument(variant_type, &val);
-                        *arg = val;
-                        break;
-                    }
-                    case DBUS_TYPE::INT16:
-                    {
-                        int16_t val;
-                        err = extractArgument(variant_type, &val);
-                        *arg = val;
-                        break;
-                    }
-                    case DBUS_TYPE::UINT16:
-                    {
-                        uint16_t val;
-                        err = extractArgument(variant_type, &val);
-                        *arg = val;
-                        break;
-                    }
-                    case DBUS_TYPE::INT32:
-                    {
-                        int32_t val;
-                        err = extractArgument(variant_type, &val);
-                        *arg = val;
-                        break;
-                    }
-                    case DBUS_TYPE::UINT32:
-                    {
-                        uint32_t val;
-                        err = extractArgument(variant_type, &val);
-                        *arg = val;
-                        break;
-                    }
-                    case DBUS_TYPE::INT64:
-                    {
-                        int64_t val;
-                        err = extractArgument(variant_type, &val);
-                        *arg = val;
-                        break;
-                    }
-                    case DBUS_TYPE::UINT64:
-                    {
-                        uint64_t val;
-                        err = extractArgument(variant_type, &val);
-                        *arg = val;
-                        break;
-                    }
-                    case DBUS_TYPE::DOUBLE:
-                    {
-                        double val;
-                        err = extractArgument(variant_type, &val);
-                        *arg = val;
-                        break;
-                    }
-                    case DBUS_TYPE::STRING:
-                    {
-                        std::string val;
-                        err = extractArgument(variant_type, &val);
-                        *arg = val;
-                        break;
-                    }
-                    case DBUS_TYPE::SIGNATURE:
-                    {
-                        Signature val;
-                        err = extractArgument(variant_type, &val);
-                        *arg = val;
-                        break;
-                    }
-                    case DBUS_TYPE::PATH:
-                    {
-                        ObjectPath val;
-                        err = extractArgument(variant_type, &val);
-                        *arg = val;
-                        break;
-                    }
+                    case DBUS_TYPE::BYTE:      { err = extractVariantMember<uint8_t>(*arg);      break; }
+                    case DBUS_TYPE::BOOLEAN:   { err = extractVariantMember<bool>(*arg);         break; }
+                    case DBUS_TYPE::INT16:     { err = extractVariantMember<int16_t>(*arg);      break; }
+                    case DBUS_TYPE::UINT16:    { err = extractVariantMember<uint16_t>(*arg);     break; }
+                    case DBUS_TYPE::INT32:     { err = extractVariantMember<int32_t>(*arg);      break; }
+                    case DBUS_TYPE::UINT32:    { err = extractVariantMember<uint32_t>(*arg);     break; }
+                    case DBUS_TYPE::INT64:     { err = extractVariantMember<int64_t>(*arg);      break; }
+                    case DBUS_TYPE::UINT64:    { err = extractVariantMember<uint64_t>(*arg);     break; }
+                    case DBUS_TYPE::DOUBLE:    { err = extractVariantMember<double>(*arg);       break; }
+                    case DBUS_TYPE::STRING:    { err = extractVariantMember<std::string>(*arg);  break; }
+                    case DBUS_TYPE::SIGNATURE: { err = extractVariantMember<Signature>(*arg);    break; }
+                    case DBUS_TYPE::PATH:      { err = extractVariantMember<ObjectPath>(*arg);   break; }
                     case DBUS_TYPE::ARRAY:
                     {
                         DBusVariant array(DBUS_TYPE::ARRAY);
@@ -415,27 +343,16 @@ namespace dbus
         {
             switch (array_type)
             {
-                case DBUS_TYPE::BYTE:
-                {
-                    uint8_t data;
-                    err = extractArgument(DBUS_TYPE::BYTE, &data);
-                    refArray.push_back(data);
-                    break;
-                }
-                case DBUS_TYPE::STRING:
-                {
-                    std::string data;
-                    err = extractArgument(DBUS_TYPE::STRING, &data);
-                    refArray.push_back(data);
-                    break;
-                }
-                case DBUS_TYPE::PATH:
-                {
-                    ObjectPath data;
-                    err = extractArgument(DBUS_TYPE::PATH, &data);
-                    refArray.push_back(data);
-                    break;
-                }
+                case DBUS_TYPE::BYTE:   { err = extractArrayMember<uint8_t>(refArray);    break; }
+                case DBUS_TYPE::INT16:  { err = extractArrayMember<int16_t>(refArray);    break; }
+                case DBUS_TYPE::INT32:  { err = extractArrayMember<int32_t>(refArray);    break; }
+                case DBUS_TYPE::INT64:  { err = extractArrayMember<int64_t>(refArray);    break; }
+                case DBUS_TYPE::UINT16: { err = extractArrayMember<uint16_t>(refArray);   break; }
+                case DBUS_TYPE::UINT32: { err = extractArrayMember<uint32_t>(refArray);   break; }
+                case DBUS_TYPE::UINT64: { err = extractArrayMember<uint64_t>(refArray);   break; }
+                case DBUS_TYPE::DOUBLE: { err = extractArrayMember<double>(refArray);     break; }
+                case DBUS_TYPE::STRING: { err = extractArrayMember<std::string>(refArray);break; }
+                case DBUS_TYPE::PATH:   { err = extractArrayMember<ObjectPath>(refArray); break; }
                 case DBUS_TYPE::ARRAY:
                 {
                     DBusVariant nextArray(DBUS_TYPE::ARRAY);
@@ -445,8 +362,12 @@ namespace dbus
                 }
                 default:
                 {
-                    printf("Warning: skip array of type %s at %u (unsupported)\n", str(array_type).c_str(), body_pos_);
+                    printf("Warning: skip array of type '%s' at %u (unsupported)\n", str(array_type).c_str(), body_pos_);
                     if (DBUS_TYPE::STRUCT_BEGIN == array_type)
+                    {
+                        align(body_pos_, 8);
+                    }
+                    if (DBUS_TYPE::DICT_BEGIN == array_type)
                     {
                         align(body_pos_, 8);
                     }
