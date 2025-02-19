@@ -236,7 +236,12 @@ namespace dbus
         msg.serialize();
 
         // Send message.
-        return writeData(msg.headerBuffer_.data(), msg.headerBuffer_.size(), 100ms);
+        auto err = writeData(msg.headerBuffer_.data(), msg.headerBuffer_.size(), 100ms);
+        if (msg.body_.size() > 0)
+        {
+            err += writeData(msg.body_.data(), msg.body_.size(), 100ms);
+        }
+        return err;
     }
 
 

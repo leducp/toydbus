@@ -60,19 +60,19 @@ namespace dbus
 
         switch (type_)
         {
-            case DBUS_TYPE::BYTE:      { storage_ = new uint8_t(0);                 break; }
-            case DBUS_TYPE::INT16:     { storage_ = new int16_t(0);                 break; }
-            case DBUS_TYPE::UINT16:    { storage_ = new uint16_t(0U);               break; }
-            case DBUS_TYPE::INT32:     { storage_ = new int32_t(0);                 break; }
-            case DBUS_TYPE::UINT32:    { storage_ = new uint32_t(0U);               break; }
-            case DBUS_TYPE::INT64:     { storage_ = new int64_t(0);                 break; }
-            case DBUS_TYPE::UINT64:    { storage_ = new uint64_t(0U);               break; }
-            case DBUS_TYPE::DOUBLE:    { storage_ = new double(0.0);                break; }
-            case DBUS_TYPE::BOOLEAN:   { storage_ = new bool(false);                break; }
-            case DBUS_TYPE::STRING:    { storage_ = new std::string();              break; }
-            case DBUS_TYPE::SIGNATURE: { storage_ = new Signature();                break; }
-            case DBUS_TYPE::PATH:      { storage_ = new ObjectPath();               break; }
-            case DBUS_TYPE::ARRAY:     { storage_ = new std::vector<DBusVariant>(); break; }
+            case DBUS_TYPE::BYTE:      { storage_ = new uint8_t{0};                       break; }
+            case DBUS_TYPE::INT16:     { storage_ = new int16_t{0};                       break; }
+            case DBUS_TYPE::UINT16:    { storage_ = new uint16_t{0U};                     break; }
+            case DBUS_TYPE::INT32:     { storage_ = new int32_t{0};                       break; }
+            case DBUS_TYPE::UINT32:    { storage_ = new uint32_t{0U};                     break; }
+            case DBUS_TYPE::INT64:     { storage_ = new int64_t{0};                       break; }
+            case DBUS_TYPE::UINT64:    { storage_ = new uint64_t{0U};                     break; }
+            case DBUS_TYPE::DOUBLE:    { storage_ = new double{0.0};                      break; }
+            case DBUS_TYPE::BOOLEAN:   { storage_ = new bool{false};                      break; }
+            case DBUS_TYPE::STRING:    { storage_ = new std::string{};                    break; }
+            case DBUS_TYPE::SIGNATURE: { storage_ = new Signature{};                      break; }
+            case DBUS_TYPE::PATH:      { storage_ = new ObjectPath{};                     break; }
+            case DBUS_TYPE::ARRAY:     { storage_ = new std::vector<DBusVariant>{};       break; }
             default:
             {
                 break;
@@ -130,7 +130,7 @@ namespace dbus
             case DBUS_TYPE::BOOLEAN: { *static_cast<bool*>(storage_)        = other.get<int16_t>();     break; }
             case DBUS_TYPE::STRING:  { *static_cast<std::string*>(storage_) = other.get<std::string>(); break; }
             case DBUS_TYPE::SIGNATURE: { *static_cast<Signature*>(storage_) = other.get<Signature>();   break; }
-            case DBUS_TYPE::PATH:      { *static_cast<ObjectPath*>(storage_)= other.get<ObjectPath>();  break; }
+            case DBUS_TYPE::PATH:    { *static_cast<ObjectPath*>(storage_)  = other.get<ObjectPath>();  break; }
             case DBUS_TYPE::ARRAY:   { *static_cast<std::vector<DBusVariant>*>(storage_) = other.get<std::vector<DBusVariant>>(); break; }
             default:
             {

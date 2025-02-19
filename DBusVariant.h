@@ -75,5 +75,4 @@ namespace dbus
     std::ostream& operator<<(std::ostream& out, DBusVariant const& v);
 }
 
-
 #endif

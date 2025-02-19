@@ -2,6 +2,7 @@
 
 #include "DBusConnection.h"
 #include "DBusMessage.h"
+#include "DBusVariant.h"
 
 using namespace dbus;
 
@@ -17,15 +18,15 @@ void printObjects(DBusMessage& answer)
 
     for (auto const& path : yolo)
     {
-        std::cout << "path: " << path.first << " - ";
+        std::cout << "path: " << path.first << std::endl;
         for (auto const& interface : path.second)
         {
-            std::cout << "interface: " << interface.first << std::endl;
+            std::cout << "    interface: " << interface.first << std::endl;
             for (auto const& var : interface.second)
             {
                 std::stringstream ss;
                 ss << var.first << ": " << var.second;
-                std::cout << "\t\t" << ss.str() << std::endl;
+                std::cout << "    \t\t" << ss.str() << std::endl;
             }
         }
     }
@@ -53,15 +54,21 @@ int main(int argc, char **argv)
     //uint32_t serial = msg.prepareCall("org.freedesktop.ModemManager1", "/org/freedesktop/ModemManager1", "org.freedesktop.DBus.ObjectManager", "GetManagedObjects");
 
 
-    uint32_t serial = msg.prepareCall("org.freedesktop.NetworkManager", "/org/freedesktop",            "org.freedesktop.DBus.ObjectManager", "GetManagedObjects");
+    //uint32_t serial = msg.prepareCall("org.freedesktop.NetworkManager", "/org/freedesktop",            "org.freedesktop.DBus.ObjectManager", "GetManagedObjects");
 
+    uint32_t serial = msg.prepareCall("org.freedesktop.ModemManager1",  "/org/freedesktop/ModemManager1/Bearer/1", "org.freedesktop.DBus.Properties", "Get");
+    msg.addArgument<std::string>("org.freedesktop.ModemManager1.Bearer");
+    msg.addArgument<std::string>("Ip4Config");
+    //printf("%s\n", msg.dump().c_str());
 
     err = bus.send(std::move(msg));
+    err.what();
     if (err)
     {
         err.what();
         return 1;
     }
+
 
     for (int i=0 ; i<100; ++i)
     {
@@ -79,12 +86,22 @@ int main(int argc, char **argv)
             break;
         }
 
+        printf("yay %d\n", answer.type());
         if (answer.isReply())
         {
+
             if (answer.replySerial() == serial)
             {
                 //std::cout <<  answer.dump();
-                printObjects(answer);
+                //printObjects(answer);
+                Dict<std::string, DBusVariant> data;
+                auto err = answer.extractArgument(data);
+                err.what();
+
+                for (auto& entry : data)
+                {
+                    std::cout << "ouiiii " << entry.first << std::endl;
+                }
             }
         }
     }
